@@ -16,5 +16,5 @@ A website for the Sun Knights Diep Clan.
 ## Run it (dev)
   1. python manage.py runserver
   
-####OR
+#### OR
   1. bash run.sh
