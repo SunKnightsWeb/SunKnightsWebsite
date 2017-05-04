@@ -1,0 +1,13 @@
+django==1.10
+djangorestframework
+djangorestframework-bulk
+django-all-access
+django-widget-tweaks
+django-markdown-deux
+geoip2
+python-slugify
+django_compressor
+csscompressor
+html5lib
+django-cachalot
+django-debug-toolbar

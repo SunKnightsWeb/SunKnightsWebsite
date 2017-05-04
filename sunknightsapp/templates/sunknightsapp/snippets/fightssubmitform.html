@@ -1,0 +1,30 @@
+<form action="{% url 'ajaxhandler' %}" id="fightsubmit" method="POST">
+    {% csrf_token %}
+    {{ submitfightsform.ajax_action_id }}
+
+
+    <div class="form-group">
+        <label for="select-users-one-on-one">User you fought against:</label>
+        <select id="select-users-one-on-one" name="pointsinfoloser" class="selectpicker with-ajax form-control" data-live-search="true" required placeholder="Select a person...">
+        </select>
+    </div>
+
+
+    <div class="form-group">
+        <label for="whowonbox">Did you win?</label>
+        <select  name="whowon" class="form-control" placeholder="Select an Option" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="proof">Proof of your score <i class="fa fa-question-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="You need to have a screenshot of each kill or a recording (upload to youtube). Having a Points Manager in your sandbox is also a sufficient proof."></i></label>
+        <input type="url" class="form-control" name="proof" id="proof" pattern="[^\s]+" title="Do not put multiple proofs here please. Put them all into one link (e.g imgur album)." required
+               placeholder="http://imgur.com/a/euVO7"
+               aria-describedby="urlHelpBlock">
+        <p id="urlHelpBlock" class="form-text">
+            A 1vs1 fight needs at least 5 kills with a screenshot on each kill (upload those screenshots on imgur to an album). Alternative: Have a points manager in the sandbox or record the fight and upload it on youtube.
+    </div>
+    <button type="submit" id="fightsubmitbtn" class="btn btn-primary">Submit</button>
+</form>

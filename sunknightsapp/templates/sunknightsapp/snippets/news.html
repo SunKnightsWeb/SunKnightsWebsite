@@ -1,0 +1,91 @@
+{% load task_quests %}
+<div class="row">
+    <div class="card-block col-12 col-sm-12 mCustomScrollbar" data-mcs-theme="minimal-dark" id="quests-block">
+
+        <div class="card-deck">
+
+            <div class="card">
+                <div class="card-block">
+                    <h4 class="card-title">Permanent Quests {% if permcooldown %}
+                        <span class="datevalid h6">Cooldown {{ permcooldown }}</span>{% endif %}</h4>
+                    <p class="card-text">
+
+                        {% for task in permdaily.validtasks.all %}
+
+                            <div class="questtaskuserdiv" id="task-{{ task.id }}">
+                                <ul>
+                                    <li class="">
+                                        {% if permcooldown %}<del>{% endif %}
+                                        <span class="pointsquest" data-toggle="tooltip" data-html="true"
+                                              data-placement="top"
+                                              title="Gives a {{ task.cooldown }} hours cooldown of doing permanent quests. Created by {{ task.manager }}">{{ task.points }} Points:</span>
+
+                                        {{ task.questtext_html }}{% if permcooldown %}</del>{% endif %}
+                                        <i class="fa fa-question-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Gives {{ task.cooldown }} hours cooldown"></i>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        {% endfor %}
+
+
+                    </p>
+
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="card-block">
+                    <h4 class="card-title">Daily Quests <span class="datevalid h6">Valid for {{ validtill }}</span></h4>
+                    <p class="card-text">
+                        {% if daily.validtasks.all.count > 0 %}
+                            Quests:
+                        {% endif %}
+                        {% for task in daily.validtasks.all %}
+                            <div class="questtaskuserdiv" id="task-{{ task.id }}">
+                                <ul>
+                                    <li>
+                                        <span class="pointsquest" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Created by {{ task.manager }}">{{ task.points }} Points:</span>
+                                        {{ task.questtext_html }}{% autoescape off %}
+                                            {% task_checked user task %}{% endautoescape %}
+                                    </li>
+                                </ul>
+                            </div>
+                        {% endfor %}
+                    {% if daily.builds.all.count > 0 %}
+                        Builds <i class="fa fa-question-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Submit it as a SCORE submission with a note that you used a daily note, please."></i>:
+                    {% endif %}
+                    {% for build in daily.builds.all %}
+                        <div class="questtaskuserdiv" id="build-{{ build.id }}">
+                            <ul>
+                                <li>
+                                    <span class="build">Build:</span>
+                                    {{ build.build }}
+                                </li>
+                            </ul>
+                        </div>
+                    {% endfor %}
+
+                    {% if daily.multipliers.all.count > 0 %}
+                        Multipliers <i class="fa fa-question-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Multiplies the resulting points from SCORE Submissions"></i>:
+                    {% endif %}
+                    {% for multiplier in daily.multipliers.all %}
+                        <div class="questtaskuserdiv" id="multiplier-{{ multiplier.id }}">
+                            <ul>
+                                <li>
+                                    <span class="pointsquest">{{ multiplier.tank.name }}:</span>x{{ multiplier.multiplier }}
+                                </li>
+                            </ul>
+                        </div>
+                    {% endfor %}
+
+                    </p>
+
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>

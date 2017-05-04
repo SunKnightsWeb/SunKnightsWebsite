@@ -1,0 +1,39 @@
+{% extends "sunknightsapp/base.html" %}
+{% block content %}
+
+    <div class="row">
+
+      <body background="http://i.imgur.com/asiql8E.png"> </body>
+
+        <div class="col-sm-6 offset-sm-3">
+            {% if errors %}
+                <div class="alert alert-danger" role="alert">
+                    <ul>
+                    {% for error in errors %}
+                    <li>    <p>{{ error }}</p></li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            <div id="card-sk-description" class="card sk-description">
+                <div class="card-block">
+                    <h4 class="card-title">Sun Knights</h4>
+                    <p class="card-text">
+                        Sun Knights is a competitive clan based on the <a href="http://diep.io">diep.io</a> game. Join us to
+                        enhance
+                        your
+                        skills,
+                        play with experienced players, take part in events, complete daily quests and unravel the gamer
+                        in you!
+                    </p>
+                    <div class="discord-lini">
+                        <div class="discord-widget"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}

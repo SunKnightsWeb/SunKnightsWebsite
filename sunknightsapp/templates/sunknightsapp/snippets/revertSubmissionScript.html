@@ -1,0 +1,188 @@
+<script>
+
+    var isManager=false
+
+      {% if user.is_points_manager %}
+       isManager=true
+      {% endif %}
+
+
+    $(document).ready(function () {
+        $('#decided-submissions-score-table').DataTable({
+          "searching":true,
+            "columnDefs":[{
+                "targets": [ 2 ],
+                "visible": false,
+                "searchable": false}
+            ],
+            "fnDrawCallback": function (oSettings) {
+                revertSubmission()
+            },
+            "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                // Bold the grade for all 'A' grade browsers
+                if ( aData.accepted == true )
+                {
+                    $(nRow).css('color','LimeGreen')
+                }
+                else{
+                    $(nRow).css('color','Tomato')
+                }
+            },
+          "serverSide": true,
+          "ajax": {
+            "url": "{% url 'ajaxhandler' %}",
+            "dataSrc": function (json) {
+
+              console.log(json)
+
+              var data = json['data']
+
+              var return_data = new Array();
+              console.log(data)
+              for (var i = 0; i < data.length; i++) {
+
+
+                var submitterText=escapeHtml(data[i].submitterText)
+
+                var managerText=escapeHtml(data[i].managerText)
+
+
+                var submissionid=data[i].id
+
+                if (isManager) {
+                  submissionid = '<input class="button-x-corner" type="button" submission_id='+submissionid+' value="X">'+submissionid
+                }
+
+
+                var tankname='<div class="'+slugify(data[i].tank.name)+'"></div>'+data[i].tank.name
+
+                var accepted=data[i].accepted
+
+                var score=data[i].score
+
+                var points=data[i].points
+
+                var managername = '<a href="/user/'+data[i].manager.discord_id+'">'+data[i].manager.discord_nickname+'</a>'
+
+                var proof='<a href="'+data[i].proof+'">Prooflink</a>'
+
+                var date=moment(data[i].date).format("MMM D Y, hh:mm:ss A")
+
+
+                return_data.push({
+                  'submissionid': submissionid,
+                  'tankname': tankname,
+                  'accepted': accepted,
+                  'score': score,
+                  'points': points,
+                  'subtext':submitterText,
+                  'mantext':managerText,
+                  'managername': managername,
+                  'proof': proof,
+                  'date': date,
+                })
+              }
+              return return_data;
+            },
+            "type": "POST",
+            "data": function (d) {
+              d.csrfmiddlewaretoken = csrftoken
+              d.ajax_action_id =ajaxactions.RETRIEVEDECIDEDSCORE
+              d.pointsinfo={{ lookuser.pointsinfo.id }}
+            }
+          },
+          "columns": [
+            {"data": "submissionid"},
+            {"data": "tankname"},
+            {"data": "accepted"},
+            {"data": "score"},
+            {"data": "points"},
+            {"data": "subtext"},
+            {"data": "mantext"},
+            {"data": "managername"},
+            {"data": "proof"},
+            {"data": "date"},
+          ],
+        })
+
+        $('#decided-submissions-fights-table').DataTable({
+            "columnDefs":[{
+                "targets": [ 5 ],
+                "visible": false,
+                "searchable": false}
+            ],
+            "fnDrawCallback": function (oSettings) {
+                revertSubmission()
+            },
+            "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                // Bold the grade for all 'A' grade browsers
+                if ( aData[5] == "True" )
+                {
+                    $(nRow).css('color','LimeGreen')
+                }
+                else{
+                    $(nRow).css('color','Tomato')
+                }
+            }})
+
+        $('#decided-events-quests-table').DataTable({
+            "columnDefs":[{
+                "targets": [ 5 ],
+                "visible": false,
+                "searchable": false}
+            ],
+            "fnDrawCallback": function (oSettings) {
+                revertSubmission()
+            },
+            "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                // Bold the grade for all 'A' grade browsers
+                if ( aData[5] == "True" )
+                {
+                    $(nRow).css('color','LimeGreen')
+                }
+                else{
+                    $(nRow).css('color','Tomato')
+                }
+            }})
+
+
+
+        $('#decided-submissions-custom-table').DataTable({
+            "fnDrawCallback": function (oSettings) {
+                revertSubmission()
+            }})
+
+
+
+        function revertSubmission() {
+            $(".button-x-corner").unbind('click');
+            $('.button-x-corner').click(function () {
+                var element = $(this);
+                $(this).attr('disabled','true');
+                var submission_id = $(this).attr('submission_id');
+
+                element.closest("tr").find('input,button').attr('disabled','true');
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'ajaxhandler' %}",
+                    data: {csrfmiddlewaretoken: csrftoken,ajax_action_id:{{ revertsubmissionid }},pk_id:submission_id},
+                    success: function (data, textStatus, xhr) {
+                        console.log(data);
+                        console.log(xhr);
+                        if (xhr.status == '200') {
+                            //table.row(element.closest("tr")).remove().draw(false)
+                            element.closest("tr").remove();
+                            $('#alertsContainer').append("<div class=\"alert alert-success alert-dismissible fade in\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>Reverted Submission: " + data['message']['data']['id'] + "<strong></div>")
+                        }
+                    }
+                });
+            })
+        }
+
+
+
+
+
+    });
+</script>
